@@ -33,3 +33,7 @@ variable "backend_port" {
 variable "frontend_port" {
   type = string
 }
+
+variable "pem_path" {
+  type = string
+}
