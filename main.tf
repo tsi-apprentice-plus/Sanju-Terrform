@@ -43,7 +43,7 @@ resource "aws_security_group" "instance-security-group" {
 }
 
 # Define an EC2 instance resource
-resource "aws_instance" "kind-runner" {
+resource "aws_instance" "runner" {
   ami                    = "ami-0a640b520696dc6a8"                         # Amazon machine image id
   instance_type          = "t2.medium"                                     #  the instance type
   user_data              = file("./user-data.sh")             # Load user data script
@@ -55,7 +55,7 @@ resource "aws_instance" "kind-runner" {
 
   # Tag the instance
   tags = {
-    Name     = "${var.my_name}-kind-runner"
+    Name     = "${var.my_name}-runner"
     Cost_tag = "ap"
   }
 }
