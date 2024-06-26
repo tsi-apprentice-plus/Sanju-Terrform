@@ -46,7 +46,20 @@ resource "aws_security_group" "instance-security-group" {
 resource "aws_instance" "runner" {
   ami                    = "ami-0a640b520696dc6a8"                         # Amazon machine image id
   instance_type          = "t2.medium"                                     #  the instance type
-  user_data              = file("./user-data.sh")             # Load user data script
+  user_data              = <<-EOF
+    #!/bin/bash
+    sudo apt-get update -y
+    sudo apt-get install ca-certificates curl wget gnupg -y
+    sudo install -m 0755 -d /etc/apt/keyrings
+    sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
+    sudo chmod a+r /etc/apt/keyrings/docker.asc
+    echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu $(. /etc/os-release && echo "$VERSION_CODENAME") stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+    sudo apt-get update -y
+    sudo apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin -y
+    sudo usermod -aG docker ubuntu
+    sudo usermod -aG docker root
+  EOF
+  # Load user data script
   key_name = "bae-tsi-apprentice-plus"
   vpc_security_group_ids = [aws_security_group.instance-security-group.id] # Attach the security group
   root_block_device {
