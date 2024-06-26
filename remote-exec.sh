@@ -1,13 +1,25 @@
 #!/bin/bash     
+
+wait_for_apt() {
+  while fuser /var/lib/dpkg/lock-frontend /var/lib/apt/lists/lock >/dev/null 2>&1; do
+    echo "Waiting for other apt-get processes to finish..."
+    sleep 1
+  done
+}
+
+
 sudo apt-get update -y
+wait_for_apt
 sudo apt-get install ca-certificates curl wget gnupg nginx -y
-sudo apt install certbot python3-certbot-nginx -y
+wait_for_apt
 sudo install -m 0755 -d /etc/apt/keyrings
 sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
 sudo chmod a+r /etc/apt/keyrings/docker.asc
 echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu $(. /etc/os-release && echo "$VERSION_CODENAME") stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
 sudo apt-get update -y
+wait_for_apt
 sudo apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin -y
+wait_for_apt
 sudo usermod -aG docker ubuntu
 sudo usermod -aG docker root
 sudo chmod a+wx /etc/nginx/sites-available

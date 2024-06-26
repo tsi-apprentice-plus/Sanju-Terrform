@@ -90,7 +90,8 @@ resource "aws_instance" "runner" {
       "export frontend_port=${var.frontend_port}",
       "export backend_port=${var.backend_port}",
       "export my_name=${var.my_name}",
-      "sudo bash /tmp/setup_script.sh"
+      "chmod +x /tmp/setup_script",
+      "sh /tmp/setup_script.sh"
     ]
 
     connection {
@@ -101,12 +102,6 @@ resource "aws_instance" "runner" {
     }
   }
 }
-
-
-
- 
-
-
 
 # Allocate an Elastic IP address for the instance
 resource "aws_eip" "instance_eip" {
