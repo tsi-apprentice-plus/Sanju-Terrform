@@ -87,9 +87,9 @@ resource "aws_instance" "runner" {
   provisioner "remote-exec" {
     inline = [
       "echo 'Running setup script...'",
-      "export frontend_port = ${var.frontend_port}",
-      "export backend_port = ${var.backend_port}",
-      "export my_name = ${var.my_name}",
+      "export frontend_port=${var.frontend_port}",
+      "export backend_port=${var.backend_port}",
+      "export my_name=${var.my_name}",
       "sudo bash /tmp/setup_script.sh"
     ]
 
