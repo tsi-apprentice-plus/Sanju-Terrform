@@ -62,7 +62,7 @@ resource "aws_instance" "runner" {
 
 # Allocate an Elastic IP address for the instance
 resource "aws_eip" "instance_eip" {
-  instance = aws_instance.kind-runner.id # Associate the EIP with the instance
+  instance = aws_instance.runner.id # Associate the EIP with the instance
   domain   = "vpc"
 
   # Tag the Elastic IP
@@ -74,7 +74,7 @@ resource "aws_eip" "instance_eip" {
 
 # Associate the Elastic IP address with the instance (give it a static ip address)
 resource "aws_eip_association" "instance_eip" {
-  instance_id   = aws_instance.kind-runner.id # Specify the instance ID
+  instance_id   = aws_instance.runner.id # Specify the instance ID
   allocation_id = aws_eip.instance_eip.id     # Specify the allocation ID of the EIP
 }
 
