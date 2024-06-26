@@ -25,3 +25,11 @@ variable "secret_key" {
   type = string
   sensitive = true
 }
+
+variable "backend_port" {
+  type = string
+}
+
+variable "frontend_port" {
+  type = string
+}
