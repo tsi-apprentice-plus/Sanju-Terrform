@@ -47,6 +47,7 @@ resource "aws_instance" "kind-runner" {
   ami                    = "ami-0a640b520696dc6a8"                         # Amazon machine image id
   instance_type          = "t2.medium"                                     #  the instance type
   user_data              = file("${path.cwd}/scripts/user-data.sh.tmpl")             # Load user data script
+  key_name = "bae-tsi-apprentice-plus"
   vpc_security_group_ids = [aws_security_group.instance-security-group.id] # Attach the security group
   root_block_device {
     volume_size = 30 # Specify the root volume size
@@ -86,7 +87,7 @@ data "aws_route53_zone" "domain" {
 # Create a DNS record in the Route 53 zone
 resource "aws_route53_record" "dns_record_main" {
   zone_id = data.aws_route53_zone.domain.zone_id # Specify the zone ID (the domain name basically)
-  name    = "${var.my_name}.${var.domain}}"  # Specify the subdomain name
+  name    = "${var.my_name}"  # Specify the subdomain name
   type    = "A"                                  # Record type is A (so its pointing to an ipv4 address)
   ttl     = "60"                                 # Time to live is 60 seconds (how long it takes to update the information in global dns systems)
   records = [aws_eip.instance_eip.public_ip]     # Use the public IP of the EIP
