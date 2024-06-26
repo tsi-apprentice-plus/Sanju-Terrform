@@ -81,4 +81,43 @@ exec_command "touch /home/ubuntu/.kube/config"
 exec_command "sudo chown ubuntu:ubuntu /home/ubuntu/.kube/config"
 exec_command "sudo kind get kubeconfig > /home/ubuntu/.kube/config"
 
-  
+cat <<EOF > /tmp/backend.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend-deployment
+spec:
+  replicas: 2
+  nodeAffinity:
+    required:
+      nodeSelectorTerms:
+      - matchExpressions:
+        - key: kubernetes.io/hostname
+          operator: In
+          values:
+          - kind-worker
+          - kind-worker2
+          - kind-worker3
+  template:
+    metadata:
+      labels:
+        app: backend
+    spec:
+      containers:
+      - name: backend
+        image: gh27/sss-backend:latest
+        ports:
+        - containerPort: 8000
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: backend-service
+spec:
+  selector:
+    app: backend
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 8000
+  type: ClusterIP
