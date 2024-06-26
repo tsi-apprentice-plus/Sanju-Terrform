@@ -86,7 +86,7 @@ data "aws_route53_zone" "domain" {
 # Create a DNS record in the Route 53 zone
 resource "aws_route53_record" "dns_record_main" {
   zone_id = data.aws_route53_zone.domain.zone_id # Specify the zone ID (the domain name basically)
-  name    = "www.${var.my_name}.${var.domain}}"  # Specify the subdomain name
+  name    = "${var.my_name}.${var.domain}}"  # Specify the subdomain name
   type    = "A"                                  # Record type is A (so its pointing to an ipv4 address)
   ttl     = "60"                                 # Time to live is 60 seconds (how long it takes to update the information in global dns systems)
   records = [aws_eip.instance_eip.public_ip]     # Use the public IP of the EIP
