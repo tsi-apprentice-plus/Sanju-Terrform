@@ -157,7 +157,7 @@ resource "aws_route53_record" "dns_record_main" {
   records = [aws_eip.instance_eip.public_ip]     # Use the public IP of the EIP
 }
 
-resource "aws_route53_record" "dns_record_main" {
+resource "aws_route53_record" "dns_record_api" {
   zone_id = data.aws_route53_zone.domain.zone_id # Specify the zone ID (the domain name basically)
   name    = "api.${var.my_name}"  # Specify the subdomain name
   type    = "A"                                  # Record type is A (so its pointing to an ipv4 address)
