@@ -81,13 +81,16 @@ exec_command "touch /home/ubuntu/.kube/config"
 exec_command "sudo chown ubuntu:ubuntu /home/ubuntu/.kube/config"
 exec_command "sudo kind get kubeconfig > /home/ubuntu/.kube/config"
 
+
+log "Creating backend deployment and service"
+
 cat <<EOF > /tmp/backend.yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: backend-deployment
 spec:
-  replicas: 2
+  replicas: 3
   nodeAffinity:
     required:
       nodeSelectorTerms:
@@ -121,3 +124,52 @@ spec:
       port: 80
       targetPort: 8000
   type: ClusterIP
+EOF
+
+exec_command "kubectl apply -f /tmp/backend.yaml"
+
+log "Creating backend deployment and service"
+
+cat <<EOF > /tmp/frontend.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend-deployment
+spec:
+  replicas: 2
+  nodeAffinity:
+    required:
+      nodeSelectorTerms:
+      - matchExpressions:
+        - key: kubernetes.io/hostname
+          operator: In
+          values:
+          - kind-worker
+          - kind-worker2
+          - kind-worker3
+  template:
+    metadata:
+      labels:
+        app: frontend
+    spec:
+      containers:
+      - name: frontend
+        image: gh27/sss-frontend:latest
+        ports:
+        - containerPort: 3000
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: fronend-service
+spec:
+  selector:
+    app: frontend
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 300
+  type: ClusterIP
+EOF
+
+exec_command "kubectl apply -f /tmp/fronend.yaml"
